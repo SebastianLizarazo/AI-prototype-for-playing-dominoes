@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from statistics import mean
 
 ROOT = Path(__file__).resolve().parents[1] 
 sys.path.insert(0, str(ROOT / "src")) # Agrega el directorio src al path para importar módulos
@@ -26,7 +27,7 @@ def main() -> None:
     if args.mode == "ai-vs-ai":
         agent0 = AlphaBetaAgent(depth=args.depth)
         agent1 = GreedyAgent()
-        result = play_match(agent0, agent1, seed=args.seed)
+        result = play_match(agent0, agent1, seed=args.seed, collect_metrics=True)
         print_summary(result)
         return
 
@@ -110,6 +111,19 @@ def print_summary(result) -> None:
     print("--- Últimos 10 eventos ---")
     for line in result.history[-10:]:
         print(line)
+
+    if result.move_metrics:
+        p0 = [m for m in result.move_metrics if m.player == 0]
+        p1 = [m for m in result.move_metrics if m.player == 1]
+        print("--- Métricas de decisión ---")
+        print(
+            f"Player0 avg_ms={mean(m.elapsed_ms for m in p0):.3f} max_ms={max(m.elapsed_ms for m in p0):.3f} "
+            f"avg_nodes={mean(m.nodes for m in p0):.2f} avg_prunes={mean(m.prunes for m in p0):.2f}"
+        )
+        print(
+            f"Player1 avg_ms={mean(m.elapsed_ms for m in p1):.3f} max_ms={max(m.elapsed_ms for m in p1):.3f} "
+            f"avg_nodes={mean(m.nodes for m in p1):.2f} avg_prunes={mean(m.prunes for m in p1):.2f}"
+        )
 
 
 if __name__ == "__main__":
