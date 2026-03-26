@@ -3,7 +3,7 @@ from __future__ import annotations
 from game.domino import Tile
 from game.state import GameState, Move, hand_points
 
-
+# Reglas del juego de dominó, incluyendo generación de movimientos legales, aplicación de movimientos al estado del juego y cálculo de utilidad para estados terminales.
 def legal_moves(state: GameState, player: int) -> list[Move]:
     if state.round_over:
         return []
@@ -27,7 +27,8 @@ def legal_moves(state: GameState, player: int) -> list[Move]:
 
     return moves
 
-
+# Aplica un movimiento al estado del juego, devolviendo el nuevo estado resultante después de la jugada.
+# Valida que el movimiento sea legal antes de aplicarlo, actualiza el tablero, las manos de los jugadores, el turno actual y verifica si la ronda ha terminado.
 def apply_move(state: GameState, move: Move) -> GameState:
     player = state.current_player
     hand = list(state.hands[player])
@@ -78,6 +79,7 @@ def apply_move(state: GameState, move: Move) -> GameState:
     )
 
 
+# Calcula la utilidad para un jugador dado en un estado terminal, devolviendo un valor positivo si el jugador gana, negativo si pierde o la diferencia de puntos si es un empate.
 def utility_for_player(state: GameState, player: int) -> int:
     if not state.round_over:
         raise ValueError("Utility only defined for terminal states")
@@ -89,7 +91,7 @@ def utility_for_player(state: GameState, player: int) -> int:
 
     return 10_000 if state.winner == player else -10_000
 
-
+# Orienta una ficha para que coincida con el extremo del tablero al que se va a colocar, devolviendo la ficha en la orientación correcta o lanzando un error si no es posible colocarla en ese lado.
 def _orient_for_side(tile: Tile, side: str | None, left_end: int | None, right_end: int | None) -> Tile:
     if side is None:
         raise ValueError("Side is required for tile move")
@@ -110,7 +112,7 @@ def _orient_for_side(tile: Tile, side: str | None, left_end: int | None, right_e
 
     raise ValueError("Tile does not match selected board side")
 
-
+# Determina el ganador en caso de que ambos jugadores hayan pasado consecutivamente, devolviendo el jugador con menos puntos o None si es un empate.
 def _winner_if_blocked(state: GameState) -> int | None:
     p0 = hand_points(state.hands[0])
     p1 = hand_points(state.hands[1])

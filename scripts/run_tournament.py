@@ -23,6 +23,7 @@ def main() -> None:
     draws = 0
     total_turns = 0
 
+    # Ejecuta el torneo entre el agente AlphaBeta y el oponente seleccionado (Greedy o Random)
     for i in range(args.matches):
         agent0 = AlphaBetaAgent(depth=args.depth)
         agent1 = GreedyAgent() if args.opponent == "greedy" else RandomAgent()
@@ -33,7 +34,7 @@ def main() -> None:
         elif result.winner is None:
             draws += 1
 
-    print("=== Torneo ===")
+    print("---Torneo---")
     print(f"Partidas: {args.matches}")
     print(f"Wins IA(AlphaBeta): {wins}")
     print(f"Draws: {draws}")

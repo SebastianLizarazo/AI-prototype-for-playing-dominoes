@@ -6,9 +6,9 @@ from typing import Literal
 from game.domino import Tile
 
 
-Side = Literal["L", "R"]
+Side = Literal["L", "R"] 
 
-
+# Estado del juego de dominó, incluyendo el tablero, las manos de los jugadores, el turno actual, conteo de pases consecutivos, estado de la ronda y ganador si la ronda ha terminado.
 @dataclass(frozen=True, slots=True)
 class Move:
     tile: Tile | None

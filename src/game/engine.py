@@ -8,7 +8,7 @@ from game.domino import Tile, generate_double_six_set
 from game.rules import apply_move, legal_moves
 from game.state import GameState, Move, hand_points
 
-
+# Motor de juego para partidas de dominó entre dos agentes.
 @dataclass(slots=True)
 class MatchResult:
     winner: int | None
@@ -17,17 +17,17 @@ class MatchResult:
     turns: int
     history: list[str]
 
-
+# Crea el estado inicial de una partida de dominó, con las fichas repartidas aleatoriamente entre los dos jugadores.
 def create_initial_state(seed: int | None = None) -> GameState:
-    rng = random.Random(seed)
-    tiles = generate_double_six_set()
-    rng.shuffle(tiles)
+    rng = random.Random(seed) # Permite reproducir partidas usando la misma semilla.
+    tiles = generate_double_six_set() # Genera el conjunto de fichas de dominó estándar (28 fichas, desde [0|0] hasta [6|6]).
+    rng.shuffle(tiles) 
 
-    hand0 = tuple(tiles[:7])
+    hand0 = tuple(tiles[:7]) 
     hand1 = tuple(tiles[7:14])
     return GameState(board=tuple(), hands=(hand0, hand1), current_player=0)
 
-
+# Ejecuta una partida entre dos agentes, devolviendo el resultado con el ganador, puntos y un historial de las jugadas.
 def play_match(agent0: PlayerAgent, agent1: PlayerAgent, seed: int | None = None, max_turns: int = 200) -> MatchResult:
     state = create_initial_state(seed=seed)
     history: list[str] = []
@@ -35,7 +35,7 @@ def play_match(agent0: PlayerAgent, agent1: PlayerAgent, seed: int | None = None
     for turn in range(1, max_turns + 1):
         if state.round_over:
             break
-
+        # Determina el agente actual, solicita su jugada, valida que sea legal, registra la jugada en el historial y actualiza el estado del juego.
         current_player = state.current_player
         agent = agent0 if current_player == 0 else agent1
         move = agent.choose_move(state, current_player)
@@ -67,10 +67,11 @@ def _validate_agent_move(state: GameState, player: int, move: Move) -> None:
         raise ValueError(f"Illegal move from player {player}: {move}")
 
 
+# Formatea una línea de texto para el historial de jugadas, mostrando el turno, jugador, acción realizada y el estado del tablero después de la jugada.
 def _format_turn(turn: int, player: int, agent_name: str, move: Move, board: tuple[Tile, ...]) -> str:
     board_str = " ".join(str(t) for t in board) if board else "(empty)"
     if move.is_pass:
         action = "PASS"
     else:
         action = f"{move.tile} -> {move.side}"
-    return f"T{turn:03d} P{player}({agent_name}) {action} | board: {board_str}"
+    return f"Turn: {turn:03d}, Player{player} ({agent_name}), Action: {action} | board: {board_str}"
