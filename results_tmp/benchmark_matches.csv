@@ -1,0 +1,13 @@
+Strategy,Search Algorithm,Heuristic,Search Depth,Base Seed,Match ID,Seat,Opponent Policy,Turns,Winner Player,Outcome,Point Difference,Avg Nodes per Decision,Avg Prunes per Decision,Avg Decision Time (ms),Avg CPU Time (ms),Max Decision Time (ms)
+Alpha-Beta (Linear),Alpha-Beta,Linear,3,42,0,0,greedy,13,0,win,6,19.571,2.286,0.144,0.0,0.563
+Alpha-Beta (Linear),Alpha-Beta,Linear,3,42,0,1,greedy,14,1,win,11,22.571,2.286,0.133,0.0,0.426
+Minimax (Linear),Minimax,Linear,3,42,0,0,greedy,13,0,win,6,25.857,0.0,0.165,0.0,0.662
+Minimax (Linear),Minimax,Linear,3,42,0,1,greedy,14,1,win,11,25.286,0.0,0.149,0.0,0.424
+Alpha-Beta (Manhattan),Alpha-Beta,Manhattan,3,42,0,0,greedy,11,0,win,5,19.5,3.0,0.123,0.0,0.446
+Alpha-Beta (Manhattan),Alpha-Beta,Manhattan,3,42,0,1,greedy,15,0,loss,-5,16.714,2.143,0.101,0.0,0.307
+Minimax (Manhattan),Minimax,Manhattan,3,42,0,0,greedy,11,0,win,5,28.167,0.0,0.179,0.0,0.665
+Minimax (Manhattan),Minimax,Manhattan,3,42,0,1,greedy,15,0,loss,-5,21.571,0.0,0.134,0.0,0.426
+Alpha-Beta (Euclidean),Alpha-Beta,Euclidean,3,42,0,0,greedy,11,0,win,5,19.167,2.833,0.133,0.0,0.482
+Alpha-Beta (Euclidean),Alpha-Beta,Euclidean,3,42,0,1,greedy,13,0,loss,-5,23.167,3.0,0.145,0.0,0.321
+Minimax (Euclidean),Minimax,Euclidean,3,42,0,0,greedy,11,0,win,5,28.167,0.0,0.186,0.0,0.702
+Minimax (Euclidean),Minimax,Euclidean,3,42,0,1,greedy,13,0,loss,-5,29.0,0.0,0.322,0.0,0.978

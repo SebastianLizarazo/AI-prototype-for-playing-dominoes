@@ -1,0 +1,7 @@
+Strategy,Matches,Wins,Losses,Draws,Win Rate,Avg Turns,Std Turns,Avg Point Difference,Std Point Difference,Avg Nodes per Decision,Std Nodes per Decision,Avg Prunes per Decision,Std Prunes per Decision,Avg Decision Time (ms),Std Decision Time (ms),Max Decision Time (ms),Avg CPU Time (ms),Std CPU Time (ms),Turns CI95 Low,Turns CI95 High,Point Diff CI95 Low,Point Diff CI95 High
+Alpha-Beta (Linear),2,2,0,0,1.0,13.5,0.707,8.5,3.536,21.071,2.121,2.286,0.0,0.139,0.008,0.563,0.0,0.0,12.52,14.48,3.6,13.4
+Minimax (Linear),2,2,0,0,1.0,13.5,0.707,8.5,3.536,25.571,0.404,0.0,0.0,0.157,0.011,0.662,0.0,0.0,12.52,14.48,3.6,13.4
+Alpha-Beta (Manhattan),2,1,1,0,0.5,13.0,2.828,0.0,7.071,18.107,1.97,2.571,0.606,0.112,0.015,0.446,0.0,0.0,9.08,16.92,-9.8,9.8
+Minimax (Manhattan),2,1,1,0,0.5,13.0,2.828,0.0,7.071,24.869,4.664,0.0,0.0,0.156,0.031,0.665,0.0,0.0,9.08,16.92,-9.8,9.8
+Alpha-Beta (Euclidean),2,1,1,0,0.5,12.0,1.414,0.0,7.071,21.167,2.828,2.917,0.118,0.139,0.009,0.482,0.0,0.0,10.04,13.96,-9.8,9.8
+Minimax (Euclidean),2,1,1,0,0.5,12.0,1.414,0.0,7.071,28.583,0.589,0.0,0.0,0.254,0.096,0.978,0.0,0.0,10.04,13.96,-9.8,9.8

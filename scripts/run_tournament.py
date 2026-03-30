@@ -24,6 +24,69 @@ class StrategyConfig:
     depth: int
 
 
+MATCHES_COLUMN_MAP = {
+    "strategy": "Strategy",
+    "algorithm": "Search Algorithm",
+    "heuristic": "Heuristic",
+    "depth": "Search Depth",
+    "base_seed": "Base Seed",
+    "match_index": "Match ID",
+    "seat": "Seat",
+    "opponent": "Opponent Policy",
+    "turns": "Turns",
+    "winner": "Winner Player",
+    "outcome": "Outcome",
+    "point_diff": "Point Difference",
+    "avg_nodes": "Avg Nodes per Decision",
+    "avg_prunes": "Avg Prunes per Decision",
+    "avg_decision_ms": "Avg Decision Time (ms)",
+    "avg_cpu_ms": "Avg CPU Time (ms)",
+    "max_latency_ms": "Max Decision Time (ms)",
+}
+
+MOVES_COLUMN_MAP = {
+    "strategy": "Strategy",
+    "algorithm": "Search Algorithm",
+    "heuristic": "Heuristic",
+    "depth": "Search Depth",
+    "base_seed": "Base Seed",
+    "match_index": "Match ID",
+    "seat": "Seat",
+    "turn": "Turn",
+    "elapsed_ms": "Decision Time (ms)",
+    "cpu_ms": "CPU Time (ms)",
+    "nodes": "Nodes Expanded",
+    "prunes": "Nodes Pruned",
+    "is_pass": "Is Pass",
+}
+
+SUMMARY_COLUMN_MAP = {
+    "strategy": "Strategy",
+    "matches": "Matches",
+    "wins": "Wins",
+    "losses": "Losses",
+    "draws": "Draws",
+    "win_rate": "Win Rate",
+    "avg_turns": "Avg Turns",
+    "std_turns": "Std Turns",
+    "avg_point_diff": "Avg Point Difference",
+    "std_point_diff": "Std Point Difference",
+    "avg_nodes": "Avg Nodes per Decision",
+    "std_nodes": "Std Nodes per Decision",
+    "avg_prunes": "Avg Prunes per Decision",
+    "std_prunes": "Std Prunes per Decision",
+    "avg_decision_ms": "Avg Decision Time (ms)",
+    "std_decision_ms": "Std Decision Time (ms)",
+    "max_latency_ms": "Max Decision Time (ms)",
+    "avg_cpu_ms": "Avg CPU Time (ms)",
+    "std_cpu_ms": "Std CPU Time (ms)",
+    "turns_ci95_low": "Turns CI95 Low",
+    "turns_ci95_high": "Turns CI95 High",
+    "point_diff_ci95_low": "Point Diff CI95 Low",
+    "point_diff_ci95_high": "Point Diff CI95 High",
+}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Benchmark reproducible de agentes Dominó")
     parser.add_argument("--matches", type=int, default=30)
@@ -128,9 +191,9 @@ def main() -> None:
         aggregates.append(aggregate)
 
     summary_rows = [asdict(aggregate) for aggregate in aggregates]
-    _export_csv(output_dir / "benchmark_matches.csv", all_match_rows)
-    _export_csv(output_dir / "benchmark_moves.csv", all_move_rows)
-    _export_csv(output_dir / "benchmark_summary.csv", summary_rows)
+    _export_csv(output_dir / "benchmark_matches.csv", all_match_rows, MATCHES_COLUMN_MAP)
+    _export_csv(output_dir / "benchmark_moves.csv", all_move_rows, MOVES_COLUMN_MAP)
+    _export_csv(output_dir / "benchmark_summary.csv", summary_rows, SUMMARY_COLUMN_MAP)
     _export_json(output_dir / "benchmark_report.json", {
         "config": {
             "matches": args.matches,
@@ -204,16 +267,54 @@ def _safe_avg(values: list[float]) -> float:
     return sum(values) / len(values)
 
 
-def _export_csv(path: Path, rows: list[dict]) -> None:
+def _export_csv(path: Path, rows: list[dict], column_map: dict[str, str]) -> None:
     if not rows:
         path.write_text("", encoding="utf-8")
         return
 
-    fieldnames = list(rows[0].keys())
+    ordered_keys = [key for key in column_map if key in rows[0]]
+    fieldnames = [column_map[key] for key in ordered_keys]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(rows)
+        for row in rows:
+            writer.writerow(_format_csv_row(row, ordered_keys, column_map))
+
+
+def _format_csv_row(row: dict, ordered_keys: list[str], column_map: dict[str, str]) -> dict:
+    formatted_row: dict = {}
+    for key in ordered_keys:
+        value = row.get(key)
+        if key == "strategy" and isinstance(value, str):
+            value = _latex_safe_strategy(value)
+        elif key == "algorithm" and isinstance(value, str):
+            value = _human_algorithm_name(value)
+        elif key == "heuristic" and isinstance(value, str):
+            value = value.title()
+
+        if isinstance(value, float):
+            value = round(value, 3)
+
+        formatted_row[column_map[key]] = value
+    return formatted_row
+
+
+def _latex_safe_strategy(strategy_name: str) -> str:
+    if "::" in strategy_name:
+        algorithm, heuristic = strategy_name.split("::", maxsplit=1)
+        human_algorithm = _human_algorithm_name(algorithm)
+        human_heuristic = heuristic.title()
+        return f"{human_algorithm} ({human_heuristic})"
+    return strategy_name.replace("_", r"\_")
+
+
+def _human_algorithm_name(algorithm: str) -> str:
+    normalized = algorithm.strip().lower()
+    if normalized == "alpha_beta":
+        return "Alpha-Beta"
+    if normalized == "minimax":
+        return "Minimax"
+    return algorithm.replace("_", " ").title()
 
 
 def _export_json(path: Path, payload: dict) -> None:
